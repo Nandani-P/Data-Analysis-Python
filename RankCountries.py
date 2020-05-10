@@ -8,11 +8,11 @@ import operator
 import pandas as pd
 from FinalProjectCountryClass import Country
 import csv
-   
+
 class readWriteCSV():
     def __init__(self):
         self.diCountries = {}     
-        self.count = 1 
+    
     
     def csvReadData(self):
         
@@ -56,7 +56,7 @@ class readWriteCSV():
             else:
                 addCountry = Country(i, 2015, 0, 0, 0, j)
                 self.diCountries.update({i:addCountry})
-        print ("sample ", self.diCountries["India"].name, self.diCountries["India"].perIncome, self.diCountries["India"].popDensity, self.diCountries["India"].HDI) 
+        #print ("sample ", self.diCountries["India"].name, self.diCountries["India"].perIncome, self.diCountries["India"].popDensity, self.diCountries["India"].HDI) 
 
         attrDemocracy = pd.read_csv("C:/Users/nanda/Downloads/democracy_score_use_as_color.csv")
         CountryDmcrySeries = attrDemocracy[["country","2011"]]       
@@ -68,7 +68,7 @@ class readWriteCSV():
             else:
                 addCountry = Country(i, 2011, 0, 0, 0, 0, j)
                 self.diCountries.update({i:addCountry})
-                
+           
         dfDemoScore = pd.DataFrame(data=CountryDmcrySeries)        
         dfDemoScore['rankDS'] = dfDemoScore['2011'].rank(method='min', ascending=False)
                 
@@ -86,12 +86,11 @@ class readWriteCSV():
         for country in (sorted(self.diCountries.values(), key=operator.attrgetter('lifeExp'), reverse=True)):
             country.setAggrRank(count)
             country.rankLE = count
-            print(country.name, country.rankLE, country.lifeExp)
             count += 1
 
     def rankPDFunc(self):
         count = 1    
-        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('popDensity'), reverse=True)):           
+        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('popDensity'))):           
             country.setAggrRank(count)
             country.rankPD = count
             count += 1      
@@ -101,14 +100,14 @@ class readWriteCSV():
         for country in (sorted(self.diCountries.values(), key=operator.attrgetter('perIncome'), reverse=True)):
             country.setAggrRank(cnt)
             country.rankPCI = cnt
-            cnt -= 1
+            cnt += 1
                 
     def rankHDIFunc(self):
-        cnt = 195
-        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('HDI'))):
+        cnt = 1
+        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('HDI'), reverse=True)):
             country.setAggrRank(cnt)
             country.rankHDI = cnt
-            cnt-= 1
+            cnt+= 1
             
     def csvWriteRank(self):
         listRank =[]
@@ -122,7 +121,17 @@ class readWriteCSV():
                 listRank1 = [listRank]
                 writer.writerows(listRank1)
                 c+=1   
+    def topBottomCountry(self, Measure1, Measure2, Measure3):
         
+        
+        for i in diCountries:
+            Object = diCountries[i]
+            C1 = Object.rankLF
+            Total =  C1 + C2+ C3
+
+
+
+            
 # main program
 cri = readWriteCSV()
 cri.csvReadData()
