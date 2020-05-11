@@ -1,21 +1,26 @@
+# This is a comment
 #
+# Data Source : "https://www.gapminder.org/data/"
 #
+# Author : Nandani Patidar
 #
-#
-#
+# Read and write data from CSV file.
+
 import math  
-import operator 
+import operator
+import csv
 import pandas as pd
 from FinalProjectCountryClass import Country
-import csv
+
 
 class readWriteCSV():
     def __init__(self):
         self.diCountries = {}
         self.Total = 0
         self.dictC1 = {}
-    
-    def csvReadData(self):
+
+    # read CSV files and create/update country objects and add to the dictionary
+    def csvReadData(self):  
         
         LifeExpFile = pd.read_csv("C:/Users/nanda/Downloads/life_expectancy_years.csv")
         countryAgeSeries = LifeExpFile[["country","2020"]]
@@ -71,58 +76,81 @@ class readWriteCSV():
                 self.diCountries.update({i:addCountry})
            
         dfDemoScore = pd.DataFrame(data=CountryDmcrySeries)        
-        dfDemoScore['rankDS'] = dfDemoScore['2011'].rank(method='min', ascending=False)
-                
+        dfDemoScore['rankDS'] = dfDemoScore['2011'].rank(method='min', ascending=False)                
         for index, row in dfDemoScore.iterrows():
             existingCountryObj = self.diCountries[row['country']]         
             if math.isnan(row['rankDS'])!= True:                   
                 existingCountryObj.setAggrRank(row['rankDS'])
-                existingCountryObj.rankDS = row['rankDS']
+                existingCountryObj.setRankDS(row['rankDS'])
             else:                
                 existingCountryObj.setAggrRank(100)
-                existingCountryObj.rankDS = 100
+                existingCountryObj.setRankDS(100)
+
+        attrFI = pd.read_csv("C:/Users/nanda/Downloads/freedix_fh.csv")
+        CountryFISeries = attrFI[["country","2018"]]
+        for i, j in CountryFISeries.itertuples(index=False):            
+            if i in self.diCountries:
+                existingCountryObj = self.diCountries[i]
+                existingCountryObj.setFreedomInd(j)
+            else:
+                addCountry = Country(i, 2015, 0, 0, 0, j)
+                self.diCountries.update({i:addCountry})
+
+        dfFreedomInd = pd.DataFrame(data=CountryFISeries)        
+        dfFreedomInd['rankFI'] = dfFreedomInd['2018'].rank(method='min', ascending=True)                
+        for index, row in dfFreedomInd.iterrows():
+            existingCountryObj = self.diCountries[row['country']]         
+            if math.isnan(row['rankFI'])!= True:                   
+                existingCountryObj.setFreedomInd(row['rankFI'])
+                existingCountryObj.setRankFI(row['rankFI'])
+            else:                
+                existingCountryObj.setFreedomInd(100)
+                existingCountryObj.setRankFI(100)
                 
+    # individual functions to create rank of measures             
     def rankLEFunc(self):
         count = 1
         for country in (sorted(self.diCountries.values(), key=operator.attrgetter('lifeExp'), reverse=True)):
             country.setAggrRank(count)
-            country.rankLE = count
+            country.setRankLE(count)
             count += 1
-
-    def rankPDFunc(self):
-        count = 1    
-        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('popDensity'))):           
-            country.setAggrRank(count)
-            country.rankPD = count
-            count += 1      
 
     def rankPCIFunc(self):   
         cnt = 1
         for country in (sorted(self.diCountries.values(), key=operator.attrgetter('perIncome'), reverse=True)):
             country.setAggrRank(cnt)
-            country.rankPCI = cnt
+            country.setRankPCI(cnt)
             cnt += 1
                 
+    def rankPDFunc(self):
+        count = 1    
+        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('popDensity'))):           
+            country.setAggrRank(count)
+            country.setRankPD(count)
+            count += 1
+            
     def rankHDIFunc(self):
         cnt = 1
         for country in (sorted(self.diCountries.values(), key=operator.attrgetter('HDI'), reverse=True)):
             country.setAggrRank(cnt)
-            country.rankHDI = cnt
+            country.setRankHDI(cnt)
             cnt+= 1
             
+    # Generate aggregate ranking and write all other ranks in CSV file        
     def csvWriteRank(self):
         listRank =[]
-        listRank1 =[]
+        listRankWrap =[]
         c = 1
         with open('rankfile.csv', 'w', newline='', encoding='utf8') as f:
             writer = csv.writer(f)
-            writer.writerows([['Country', 'Overall', 'Aggregate Rank', 'Life Expectancy ranking', 'Population Density Ranking', 'Per Capita Income', 'Human Development Index', 'Democarcy Score' ]])            
+            writer.writerows([['Country', 'Overall', 'Aggregate Rank', 'Life Expectancy ranking', 'Population Density Ranking', 'Per Capita Income', 'Human Development Index', 'Democarcy Score', 'Freedom Index' ]])            
             for country in (sorted(self.diCountries.values(), key=operator.attrgetter('aggrRank'))):
-                listRank = [country.name, c,  country.aggrRank, country.rankLE, country.rankPD, country.rankPCI, country.rankHDI, country.rankDS]
-                listRank1 = [listRank]
-                writer.writerows(listRank1)
+                listRank = [country.name, c,  country.aggrRank, country.rankLE, country.rankPD, country.rankPCI, country.rankHDI, country.rankDS, country.rankFI]
+                listRankWrap = [listRank]
+                writer.writerows(listRankWrap)
                 c+=1
 
+    # Aggragate of three criterias given by users
     def dictMeasureRanking(self, measure1, measure2, measure3):
         dictRanking = {}
         for i in self.diCountries:
@@ -138,27 +166,22 @@ class readWriteCSV():
                 total = total + countryObject.rankHDI
             if 'C5' == measure1 or 'C5' == measure2 or 'C5' == measure3:
                 total = total + countryObject.rankDS
+            if 'C6' == measure1 or 'C6' == measure2 or 'C6' == measure3:
+                total = total + countryObject.rankFI
             dictRanking.update({i: total})
-        #print(dictRanking)
+        
         Count = 1
+        print("\nTop five Countries: ")
         for j in sorted(dictRanking, key=dictRanking.get):            
-            print(j, Count)
+            print (Count, j,    "\n")
             Count+= 1
             if Count == 6:
                 break
         Count = 1
-        for j in sorted(dictRanking, key=dictRanking.get, reverse = True):
-            
+        print("Bottom five Countries: ")
+        for j in sorted(dictRanking, key=dictRanking.get, reverse = True):            
             if Count < 6:
-                print(j, Count)
+                print(Count, j, "\n")
             Count+=1   
             
-# main program
-cri = readWriteCSV()
-cri.csvReadData()
-cri.rankPDFunc()
-cri.rankLEFunc()
-cri.rankPCIFunc()
-cri.rankHDIFunc()
-cri.csvWriteRank()
-cri.dictMeasureRanking("C4", "C3", "C5")
+
