@@ -11,8 +11,9 @@ import csv
 
 class readWriteCSV():
     def __init__(self):
-        self.diCountries = {}     
-    
+        self.diCountries = {}
+        self.Total = 0
+        self.dictC1 = {}
     
     def csvReadData(self):
         
@@ -120,17 +121,37 @@ class readWriteCSV():
                 listRank = [country.name, c,  country.aggrRank, country.rankLE, country.rankPD, country.rankPCI, country.rankHDI, country.rankDS]
                 listRank1 = [listRank]
                 writer.writerows(listRank1)
-                c+=1   
-    def topBottomCountry(self, Measure1, Measure2, Measure3):
-        
-        
-        for i in diCountries:
-            Object = diCountries[i]
-            C1 = Object.rankLF
-            Total =  C1 + C2+ C3
+                c+=1
 
-
-
+    def dictMeasureRanking(self, measure1, measure2, measure3):
+        dictRanking = {}
+        for i in self.diCountries:
+            total = 0
+            countryObject = self.diCountries[i]
+            if 'C1' == measure1 or 'C1' == measure2 or 'C1' == measure3:
+                total = total + countryObject.rankLE
+            if 'C2' == measure1 or 'C2' == measure2 or 'C2' == measure3:
+                total = total + countryObject.rankPD
+            if 'C3' == measure1 or 'C3' == measure2 or 'C3' == measure3:
+                total = total + countryObject.rankPCI
+            if 'C4' == measure1 or 'C4' == measure2 or 'C4' == measure3:
+                total = total + countryObject.rankHDI
+            if 'C5' == measure1 or 'C5' == measure2 or 'C5' == measure3:
+                total = total + countryObject.rankDS
+            dictRanking.update({i: total})
+        #print(dictRanking)
+        Count = 1
+        for j in sorted(dictRanking, key=dictRanking.get):            
+            print(j, Count)
+            Count+= 1
+            if Count == 6:
+                break
+        Count = 1
+        for j in sorted(dictRanking, key=dictRanking.get, reverse = True):
+            
+            if Count < 6:
+                print(j, Count)
+            Count+=1   
             
 # main program
 cri = readWriteCSV()
@@ -140,3 +161,4 @@ cri.rankLEFunc()
 cri.rankPCIFunc()
 cri.rankHDIFunc()
 cri.csvWriteRank()
+cri.dictMeasureRanking("C4", "C3", "C5")
