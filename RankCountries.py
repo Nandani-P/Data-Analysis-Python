@@ -4,13 +4,13 @@
 #
 # Author : Nandani Patidar
 #
-# Read and write data from CSV file.
+# Read and write data from CSV file. Sorting and ranking countries on different measures.
 
 import math  
 import operator
 import csv
 import pandas as pd
-from FinalProjectCountryClass import Country
+from FinalProjectCountryClass import *
 
 
 class readWriteCSV():
@@ -106,6 +106,16 @@ class readWriteCSV():
             else:                
                 existingCountryObj.setFreedomInd(100)
                 existingCountryObj.setRankFI(100)
+
+        attrGovtHealthSpend = pd.read_csv("C:/Users/nanda/Downloads/government_share_of_total_health_spending_percent.csv")
+        CountryGHSSeries = attrGovtHealthSpend[["country","2009"]]       
+        for i, j in CountryGHSSeries.itertuples(index=False):           
+            if i in self.diCountries:
+                existingCountryObj = self.diCountries[i]
+                existingCountryObj.setGovtSpend(j)
+            else:
+                addCountry = Country(i, 2011, 0, 0, 0, 0, j)
+                self.diCountries.update({i:addCountry})
                 
     # individual functions to create rank of measures             
     def rankLEFunc(self):
@@ -135,6 +145,13 @@ class readWriteCSV():
             country.setAggrRank(cnt)
             country.setRankHDI(cnt)
             cnt+= 1
+
+    def rankGHSFunc(self):
+        cnt = 1
+        for country in (sorted(self.diCountries.values(), key=operator.attrgetter('govtSpend'), reverse=True)):
+            country.setAggrRank(cnt)
+            country.setRankGHS(cnt)
+            cnt+= 1
             
     # Generate aggregate ranking and write all other ranks in CSV file        
     def csvWriteRank(self):
@@ -143,9 +160,9 @@ class readWriteCSV():
         c = 1
         with open('rankfile.csv', 'w', newline='', encoding='utf8') as f:
             writer = csv.writer(f)
-            writer.writerows([['Country', 'Overall', 'Aggregate Rank', 'Life Expectancy ranking', 'Population Density Ranking', 'Per Capita Income', 'Human Development Index', 'Democarcy Score', 'Freedom Index' ]])            
+            writer.writerows([['Country', 'Overall', 'Aggregate Rank', 'Life Expectancy ranking', 'Population Density Ranking', 'Per Capita Income', 'Human Development Index', 'Democarcy Score', 'Freedom Index', 'Government share of health spending(%)' ]])            
             for country in (sorted(self.diCountries.values(), key=operator.attrgetter('aggrRank'))):
-                listRank = [country.name, c,  country.aggrRank, country.rankLE, country.rankPD, country.rankPCI, country.rankHDI, country.rankDS, country.rankFI]
+                listRank = [country.name, c,  country.aggrRank, country.rankLE, country.rankPD, country.rankPCI, country.rankHDI, country.rankDS, country.rankFI, country.rankGHS]
                 listRankWrap = [listRank]
                 writer.writerows(listRankWrap)
                 c+=1
@@ -168,12 +185,14 @@ class readWriteCSV():
                 total = total + countryObject.rankDS
             if 'C6' == measure1 or 'C6' == measure2 or 'C6' == measure3:
                 total = total + countryObject.rankFI
+            if 'C7' == measure1 or 'C7' == measure2 or 'C7' == measure3:
+                total = total + countryObject.rankGHS
             dictRanking.update({i: total})
         
         Count = 1
         print("\nTop five Countries: ")
         for j in sorted(dictRanking, key=dictRanking.get):            
-            print (Count, j,    "\n")
+            print (Count, j, "\n")
             Count+= 1
             if Count == 6:
                 break
