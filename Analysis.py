@@ -8,7 +8,11 @@ class visualization():
         self.listline = ['b-','g-','r-', 'y-','v-', 'p-','m-','s-','k-', 'c-']
         self.listdash = ['b--','g--','r--', 'y--','v--', 'p--','m--','s--','k--', 'c--' ]       
 
-
+    def getfileData(self, filename):        
+        data = pd.read_csv(filename, index_col='country')
+        filedata = data[data.columns[-10:]]
+        return filedata
+    
     def linePlotCountryVsYears(self, yAxislabel, data, countryList):
         plt.close()
         count = 0
@@ -24,6 +28,7 @@ class visualization():
         plt.savefig('plot.png', dpi=500, bbox_inches=None, orientation='portrait', figsize=(10,6))
         plt.show()
 
+    
 
         
 

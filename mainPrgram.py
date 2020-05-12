@@ -8,22 +8,19 @@
 from RankCountries import *
 from CountryClass import *
 
-print ("\nBelow are given the criterias and their code. You have to enter the code of your choice of criteria from the given list")
-print ("\nLife Expectancy : C1 \nPopulation Density : C2 \nPer Capita Income : C3 \nHuman Development Index : C4 \nDemocracy Score : C5 \nFreedom Index : C6 \nGovernment share of health spending(%) : C7")
-
-print("\nYou can choose any three")
-First = input("\nEnter the code for 1st criteria: " )
-Second = input("Enter the code for 2nd criteria: " )
-Third = input("Enter the code for 3rd criteria: " )
-
-
 cri = readWriteCSV()
 cri.csvReadData()
-cri.rankPDFunc()
-cri.rankLEFunc()
-cri.rankPCIFunc()
-cri.rankHDIFunc()
-cri.rankGHSFunc()
+cri.rankAll()
 cri.csvWriteRank()
+
+print ("\nBelow are given the criterias and their code. You have to enter the code of your choice of criteria from the given list")
+print ("\nLife Expectancy : 1 \nPopulation Density : 2 \nPer Capita Income : 3 \nHuman Development Index : 4 \nDemocracy Score : 5 \nFreedom Index : 6 \nGovernment share of health spending(%) : 7")
+
+print("\nYou can choose any three")
+First = int(input("\nEnter a first criteria: " ))
+Second = int(input("Enter a second criteria: " ))
+Third = int(input("Enter a third criteria: " ))
+
+
      
 cri.dictMeasureRanking(First, Second, Third)

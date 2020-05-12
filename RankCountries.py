@@ -173,19 +173,19 @@ class readWriteCSV():
         for i in self.diCountries:
             total = 0
             countryObject = self.diCountries[i]
-            if 'C1' == measure1 or 'C1' == measure2 or 'C1' == measure3:
+            if 1 == measure1 or 1 == measure2 or 1 == measure3:
                 total = total + countryObject.rankLE
-            if 'C2' == measure1 or 'C2' == measure2 or 'C2' == measure3:
+            if 2 == measure1 or 2 == measure2 or 2 == measure3:
                 total = total + countryObject.rankPD
-            if 'C3' == measure1 or 'C3' == measure2 or 'C3' == measure3:
+            if 3 == measure1 or 3 == measure2 or 3 == measure3:
                 total = total + countryObject.rankPCI
-            if 'C4' == measure1 or 'C4' == measure2 or 'C4' == measure3:
+            if 4 == measure1 or 4 == measure2 or 4 == measure3:
                 total = total + countryObject.rankHDI
-            if 'C5' == measure1 or 'C5' == measure2 or 'C5' == measure3:
+            if 5 == measure1 or 5 == measure2 or 5 == measure3:
                 total = total + countryObject.rankDS
-            if 'C6' == measure1 or 'C6' == measure2 or 'C6' == measure3:
+            if 6 == measure1 or 6 == measure2 or 6 == measure3:
                 total = total + countryObject.rankFI
-            if 'C7' == measure1 or 'C7' == measure2 or 'C7' == measure3:
+            if 7 == measure1 or 7 == measure2 or 7 == measure3:
                 total = total + countryObject.rankGHS
             dictRanking.update({i: total})
         
@@ -201,6 +201,14 @@ class readWriteCSV():
         for j in sorted(dictRanking, key=dictRanking.get, reverse = True):            
             if Count < 6:
                 print(Count, j, "\n")
-            Count+=1   
+            Count+=1
             
+    def rankAll(self):        
+        self.rankPDFunc()
+        self.rankLEFunc()
+        self.rankPCIFunc()
+        self.rankHDIFunc()
+        self.rankGHSFunc()
+        
+
 
