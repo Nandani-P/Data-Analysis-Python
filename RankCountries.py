@@ -10,7 +10,7 @@ import math
 import operator
 import csv
 import pandas as pd
-from FinalProjectCountryClass import *
+from CountryClass import *
 
 
 class readWriteCSV():
@@ -22,7 +22,7 @@ class readWriteCSV():
     # read CSV files and create/update country objects and add to the dictionary
     def csvReadData(self):  
         
-        LifeExpFile = pd.read_csv("C:/Users/nanda/Downloads/life_expectancy_years.csv")
+        LifeExpFile = pd.read_csv("data/life_expectancy_years.csv")
         countryAgeSeries = LifeExpFile[["country","2020"]]
         for i, j in countryAgeSeries.itertuples(index=False):
             if math.isnan(j)!= True:
@@ -32,7 +32,7 @@ class readWriteCSV():
                 addCountry = Country(i, 2020, 0)
                 self.diCountries.update({i:addCountry})
         
-        PerCapFile = pd.read_csv("C:/Users/nanda/Downloads/income_per_person_gdppercapita_ppp_inflation_adjusted.csv")
+        PerCapFile = pd.read_csv("data/income_per_person_gdppercapita_ppp_inflation_adjusted.csv")
         CountryIncSeries = PerCapFile[["country","2020"]]        
         for i, j in CountryIncSeries.itertuples(index=False):            
             if i in self.diCountries:
@@ -42,7 +42,7 @@ class readWriteCSV():
                 addCountry = Country(i, 2020, 0, j)
                 self.diCountries.update({i:addCountry})        
 
-        popDen = pd.read_csv("C:/Users/nanda/Downloads/population_density_per_square_km.csv")
+        popDen = pd.read_csv("data/population_density_per_square_km.csv")
         CountryPopSeries = popDen[["country","2020"]]
         for i, j in CountryPopSeries.itertuples(index=False):            
             if i in self.diCountries:
@@ -53,7 +53,7 @@ class readWriteCSV():
                 self.diCountries.update({i:addCountry})
         
 
-        attrHDI = pd.read_csv("C:/Users/nanda/Downloads/hdi_human_development_index.csv")
+        attrHDI = pd.read_csv("data/hdi_human_development_index.csv")
         CountryHDISeries = attrHDI[["country","2015"]]
         for i, j in CountryHDISeries.itertuples(index=False):            
             if i in self.diCountries:
@@ -64,7 +64,7 @@ class readWriteCSV():
                 self.diCountries.update({i:addCountry})
         #print ("sample ", self.diCountries["India"].name, self.diCountries["India"].perIncome, self.diCountries["India"].popDensity, self.diCountries["India"].HDI) 
 
-        attrDemocracy = pd.read_csv("C:/Users/nanda/Downloads/democracy_score_use_as_color.csv")
+        attrDemocracy = pd.read_csv("data/democracy_score_use_as_color.csv")
         CountryDmcrySeries = attrDemocracy[["country","2011"]]       
         for i, j in CountryDmcrySeries.itertuples(index=False):
             
@@ -86,7 +86,7 @@ class readWriteCSV():
                 existingCountryObj.setAggrRank(100)
                 existingCountryObj.setRankDS(100)
 
-        attrFI = pd.read_csv("C:/Users/nanda/Downloads/freedix_fh.csv")
+        attrFI = pd.read_csv("data/freedix_fh.csv")
         CountryFISeries = attrFI[["country","2018"]]
         for i, j in CountryFISeries.itertuples(index=False):            
             if i in self.diCountries:
@@ -107,7 +107,7 @@ class readWriteCSV():
                 existingCountryObj.setFreedomInd(100)
                 existingCountryObj.setRankFI(100)
 
-        attrGovtHealthSpend = pd.read_csv("C:/Users/nanda/Downloads/government_share_of_total_health_spending_percent.csv")
+        attrGovtHealthSpend = pd.read_csv("data/government_share_of_total_health_spending_percent.csv")
         CountryGHSSeries = attrGovtHealthSpend[["country","2009"]]       
         for i, j in CountryGHSSeries.itertuples(index=False):           
             if i in self.diCountries:

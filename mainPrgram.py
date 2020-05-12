@@ -6,7 +6,7 @@
 
 
 from RankCountries import *
-from FinalProjectCountryClass import *
+from CountryClass import *
 
 print ("\nBelow are given the criterias and their code. You have to enter the code of your choice of criteria from the given list")
 print ("\nLife Expectancy : C1 \nPopulation Density : C2 \nPer Capita Income : C3 \nHuman Development Index : C4 \nDemocracy Score : C5 \nFreedom Index : C6 \nGovernment share of health spending(%) : C7")
